@@ -19,7 +19,7 @@ passlib[bcrypt]==1.7.4
 python-dotenv==1.0.0
 
 # Message Queue
-aio-pika==13.0.0
+aio-pika==9.5.8
 
 # Utilities
 requests==2.31.0

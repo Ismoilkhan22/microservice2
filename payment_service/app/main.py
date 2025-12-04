@@ -226,17 +226,16 @@ async def root():
 
 # ===== OPENAPI CUSTOMIZATION =====
 
+from fastapi.openapi.utils import get_openapi
+
 def custom_openapi():
-    """OpenAPI schema customize"""
     if app.openapi_schema:
         return app.openapi_schema
 
-    openapi_schema = {
-        "openapi": "3.0.2",
-        "info": {
-            "title": "Payment Service API",
-            "version": "1.0.0",
-            "description": """
+    openapi_schema = get_openapi(
+        title="Payment Service API",
+        version="1.0.0",
+        description="""
             Microservices Platform - Payment Service
 
             ### Features:
@@ -250,23 +249,19 @@ def custom_openapi():
             - JWT Authentication
             - Rate Limiting
             - CORS Protection
-            """
-        },
-        "servers": [
-            {
-                "url": "http://localhost:8002",
-                "description": "Local Development"
-            },
-            {
-                "url": "http://payment-service:8002",
-                "description": "Docker Network"
-            }
-        ],
-        "paths": app.openapi()["paths"],
-    }
+        """,
+        routes=app.routes
+    )
+
+    # Qo‘shimcha o‘zgarishlar kiritish mumkin
+    openapi_schema["servers"] = [
+        {"url": "http://localhost:8002", "description": "Local Development"},
+        {"url": "http://payment-service:8002", "description": "Docker Network"}
+    ]
 
     app.openapi_schema = openapi_schema
     return app.openapi_schema
+
 
 
 app.openapi = custom_openapi
