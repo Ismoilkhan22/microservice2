@@ -40,7 +40,7 @@ class Payment(Base):
 
     # Metadata
     description = Column(String(500), nullable=True)
-    metadata = Column(String(1000), nullable=True)  # JSON string
+    metadata_info = Column(String(1000), nullable=True)  # JSON string
 
     # Timestamps
     created_at = Column(DateTime, default=datetime.utcnow, index=True)

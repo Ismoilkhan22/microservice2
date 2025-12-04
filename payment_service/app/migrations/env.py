@@ -3,14 +3,23 @@
 # ALEMBIC MIGRATION SETUP
 # ============================================
 
-from logging.config import fileConfig
-from sqlalchemy import engine_from_config
-from sqlalchemy import pool
-from alembic import context
+
+import sys
+import os
+
+# Project root-ni topish (env.py joyi: payment_service/app/migrations/env.py)
+BASE_DIR = os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "../../../")
+)
+sys.path.append(BASE_DIR)
 from shared.config import get_settings
 from payment_service.app.database.base import Base
 from payment_service.app.models.payment import Payment
 
+from logging.config import fileConfig
+from sqlalchemy import engine_from_config
+from sqlalchemy import pool
+from alembic import context
 config = context.config
 fileConfig(config.config_file_name)
 
