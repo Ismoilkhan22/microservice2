@@ -1,0 +1,77 @@
+# docker-compose.prod.yml
+# ============================================
+# PRODUCTION DOCKER COMPOSE
+# ============================================
+
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - /data/postgres:/var/lib/postgresql/data
+    networks:
+      - microservices-network
+
+  redis:
+    image: redis:7-alpine
+    restart: always
+    command: redis-server --requirepass ${REDIS_PASSWORD} --maxmemory 1gb --maxmemory-policy allkeys-lru
+    volumes:
+      - /data/redis:/data
+    networks:
+      - microservices-network
+
+  payment-service:
+    image: payment-service:latest
+    restart: always
+    environment:
+      ENVIRONMENT: production
+      DEBUG: "False"
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - microservices-network
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+
+  chat-service:
+    image: chat-service:latest
+    restart: always
+    environment:
+      ENVIRONMENT: production
+      DEBUG: "False"
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - microservices-network
+    deploy:
+      replicas: 2
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512M
+        reservations:
+          cpus: '0.5'
+          memory: 256M
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  microservices-network:
+    driver: bridge
